@@ -3,7 +3,7 @@
    ═══════════════════════════════════════ */
 
 const Api = (() => {
-  const BASE = '/api/v1';
+  const BASE = 'https://studysync-production-c350.up.railway.app/';
 
   const getToken = () => localStorage.getItem('studysync_token');
   const setToken = (token) => localStorage.setItem('studysync_token', token);
