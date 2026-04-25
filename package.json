@@ -1,0 +1,14 @@
+{
+  "name": "studysync-plus",
+  "version": "1.0.0",
+  "description": "StudySync+ — Collaborative Learning & Dataset Sharing Platform",
+  "scripts": {
+    "dev": "cd backend && npm run dev",
+    "install:all": "cd backend && npm install",
+    "seed": "cd backend && npm run seed",
+    "prisma:migrate": "cd backend && npx prisma migrate dev",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["study", "collaboration", "dataset", "learning"],
+  "license": "MIT"
+}

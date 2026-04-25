@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudySync+ — Collaborative Learning and Dataset Sharing Platform. Join study groups, share datasets, and track your contributions.">
+  <title>StudySync+ — Collaborative Learning Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <script>
+    const savedTheme = localStorage.getItem('studysync-theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- Socket.IO Client -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- App Modules -->
+  <script src="modules/utils.js"></script>
+  <script src="modules/api.js"></script>
+  <script src="modules/auth.js"></script>
+  <script src="modules/router.js"></script>
+  <script src="modules/chat.js"></script>
+  <script src="modules/groups.js"></script>
+  <script src="modules/workspace.js"></script>
+  <script src="modules/datasets.js"></script>
+  <script src="modules/datasetUpload.js"></script>
+  <script src="modules/datasetDetail.js"></script>
+  <script src="modules/profile.js"></script>
+  <script src="modules/notifications.js"></script>
+
+  <!-- Main Script -->
+  <script src="script.js"></script>
+</body>
+</html>
