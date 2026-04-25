@@ -5,7 +5,6 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const path = require('path');
 
 const { connectMongoDB } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
@@ -44,10 +43,12 @@ app.use(session({
   cookie: { secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
-// ─── Serve Frontend Static Files ───
-app.use(express.static(path.join(__dirname, '..', '..', 'frontend')));
+// ─── Root Route (IMPORTANT for Railway) ───
+app.get("/", (req, res) => {
+  res.send("🚀 StudySync backend is running");
+});
 
-// ─── API Routes (versioned) ───
+// ─── API Routes ───
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/groups', groupRoutes);
 app.use('/api/v1/notes', noteRoutes);
@@ -57,14 +58,9 @@ app.use('/api/v1/sessions', sessionRoutes);
 app.use('/api/v1/datasets', datasetRoutes);
 app.use('/api/v1/discussions', discussionRoutes);
 
-// ─── Health check ───
+// ─── Health Check ───
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// ─── Catch-all: serve frontend for SPA ───
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '..', 'frontend', 'index.html'));
 });
 
 // ─── Error Handler ───
@@ -77,19 +73,17 @@ initializeSockets(io);
 const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
-  await connectMongoDB();
+  try {
+    await connectMongoDB();
 
-  server.listen(PORT, () => {
-    console.log(`
-╔══════════════════════════════════════════════╗
-║         StudySync+ Server Running            ║
-║──────────────────────────────────────────────║
-║  🌐 http://localhost:${PORT}                   ║
-║  📡 API: http://localhost:${PORT}/api/v1        ║
-║  🔌 Socket.IO: Connected                    ║
-╚══════════════════════════════════════════════╝
-    `);
-  });
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error);
+    process.exit(1);
+  }
 };
 
 startServer();
