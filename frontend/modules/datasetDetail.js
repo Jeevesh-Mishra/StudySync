@@ -63,7 +63,7 @@ const DatasetDetail = (() => {
     const btn = Utils.$('#download-btn');
     if (!btn) return;
     btn.onclick = () => {
-      fetch(`/api/v1/datasets/download/${d._id}`, {
+      fetch(`${Api.getBaseUrl()}/datasets/download/${d._id}`, {
         headers: { 'Authorization': `Bearer ${Api.getToken()}` }
       }).then(r => r.blob()).then(blob => {
         const url = URL.createObjectURL(blob);

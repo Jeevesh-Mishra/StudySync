@@ -12,7 +12,8 @@ const Chat = (() => {
 
     if (socket && socket.connected) return;
 
-    socket = io({ auth: { token } });
+    const backendUrl = Api.getBaseUrl().replace('/api/v1', '');
+    socket = io(backendUrl, { auth: { token } });
     window.socket = socket;
 
     socket.on('connect', () => {

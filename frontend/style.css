@@ -655,6 +655,47 @@ input, textarea, select {
 /* Dataset Card */
 .dataset-card {
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dataset-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gradient-secondary);
+  opacity: 0;
+  transition: var(--transition-normal);
+}
+
+.dataset-card:hover::before {
+  opacity: 1;
+}
+
+.dataset-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.dataset-card .card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.dataset-card .card-desc {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-grow: 1;
 }
 
 .dataset-card .dataset-tags {
@@ -665,12 +706,13 @@ input, textarea, select {
 }
 
 .dataset-card .dataset-tags .tag {
-  padding: 3px 10px;
+  padding: 4px 10px;
   background: rgba(6,182,212,0.12);
   color: var(--accent-secondary);
   font-size: 0.72rem;
   font-weight: 600;
   border-radius: var(--radius-full);
+  border: 1px solid rgba(6,182,212,0.2);
 }
 
 .dataset-card .dataset-stats {
@@ -683,7 +725,7 @@ input, textarea, select {
 .dataset-card .dataset-stats span {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 /* ═══ WORKSPACE ═══ */

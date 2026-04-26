@@ -9,8 +9,9 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
   <script>
     const savedTheme = localStorage.getItem('studysync-theme');
-    if (savedTheme === 'dark') {
+    if (savedTheme === 'dark' || !savedTheme) {
       document.documentElement.setAttribute('data-theme', 'dark');
+      if (!savedTheme) localStorage.setItem('studysync-theme', 'dark');
     }
   </script>
 </head>
@@ -18,7 +19,7 @@
   <div id="app"></div>
 
   <!-- Socket.IO Client -->
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 
   <!-- App Modules -->
   <script src="modules/utils.js"></script>

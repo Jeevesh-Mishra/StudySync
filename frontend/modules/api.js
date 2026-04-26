@@ -55,9 +55,12 @@ const Api = (() => {
   const del = (endpoint) => request(endpoint, { method: 'DELETE' });
   const upload = (endpoint, formData) => request(endpoint, { method: 'POST', body: formData, headers: {} });
 
+  const getBaseUrl = () => BASE;
+
   return {
     getToken, setToken, removeToken,
     getUser, setUser, removeUser,
-    get, post, put, del, upload
+    get, post, put, del, upload,
+    getBaseUrl
   };
 })();
