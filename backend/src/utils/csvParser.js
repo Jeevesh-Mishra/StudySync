@@ -64,27 +64,55 @@ const parseJSON = (text, maxItems = 50) => {
 };
 
 /**
- * Get preview data from a dataset file
+ * Get preview data from a dataset file safely using streams to prevent OOM
  */
-const getDatasetPreview = async (filePath, mimeType, compressed) => {
-  let content;
-  if (compressed) {
-    const buffer = await readCompressedFile(filePath);
-    content = buffer.toString('utf-8');
-  } else {
-    content = fs.readFileSync(filePath, 'utf-8');
-  }
+const readline = require('readline');
+const zlib = require('zlib');
 
-  if (mimeType.includes('csv') || filePath.replace('.gz', '').endsWith('.csv')) {
-    return { type: 'csv', ...parseCSV(content) };
-  }
-  if (mimeType.includes('json') || filePath.replace('.gz', '').endsWith('.json')) {
-    return { type: 'json', ...parseJSON(content) };
-  }
+const getDatasetPreview = (filePath, mimeType, compressed) => {
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(filePath)) {
+      return reject(new Error('File not found on disk'));
+    }
 
-  // For other text files, return raw text preview
-  const lines = content.split('\n').slice(0, 50);
-  return { type: 'text', content: lines.join('\n'), totalLines: content.split('\n').length };
+    let readStream = fs.createReadStream(filePath);
+    if (compressed) {
+      const gunzip = zlib.createGunzip();
+      readStream = readStream.pipe(gunzip);
+    }
+
+    const rl = readline.createInterface({
+      input: readStream,
+      crlfDelay: Infinity
+    });
+
+    let lineCount = 0;
+    const lines = [];
+    const MAX_LINES = 50;
+
+    rl.on('line', (line) => {
+      if (lineCount <= MAX_LINES) {
+        lines.push(line);
+        lineCount++;
+      } else {
+        rl.close();
+        readStream.destroy();
+      }
+    });
+
+    rl.on('close', () => {
+      const content = lines.join('\n');
+      if (mimeType.includes('csv') || filePath.replace('.gz', '').endsWith('.csv')) {
+        resolve({ type: 'csv', ...parseCSV(content, MAX_LINES) });
+      } else if (mimeType.includes('json') || filePath.replace('.gz', '').endsWith('.json')) {
+        resolve({ type: 'json', ...parseJSON(content, MAX_LINES) });
+      } else {
+        resolve({ type: 'text', content: content, totalLines: lines.length });
+      }
+    });
+
+    readStream.on('error', reject);
+  });
 };
 
 module.exports = { parseCSV, parseJSON, getDatasetPreview };
