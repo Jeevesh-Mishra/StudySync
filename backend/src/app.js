@@ -26,13 +26,13 @@ const server = http.createServer(app);
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: true,
     methods: ['GET', 'POST']
   }
 });
 
 // ─── Middleware ───
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
