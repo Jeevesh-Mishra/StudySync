@@ -65,13 +65,19 @@ const DatasetDetail = (() => {
     btn.onclick = () => {
       fetch(`${Api.getBaseUrl()}/datasets/download/${d._id}`, {
         headers: { 'Authorization': `Bearer ${Api.getToken()}` }
-      }).then(r => r.blob()).then(blob => {
+      }).then(async r => {
+        if (!r.ok) {
+          const errData = await r.json().catch(() => ({}));
+          throw new Error(errData.message || 'Download failed on server');
+        }
+        return r.blob();
+      }).then(blob => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = d.originalName; a.click();
         URL.revokeObjectURL(url);
         Utils.showToast('Download started!', 'success');
-      }).catch(e => Utils.showToast('Download failed', 'error'));
+      }).catch(e => Utils.showToast(e.message || 'Download failed', 'error'));
     };
   };
 

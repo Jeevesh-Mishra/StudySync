@@ -104,6 +104,10 @@ const downloadDataset = async (req, res, next) => {
     const dataset = await Dataset.findById(req.params.id);
     if (!dataset) return res.status(404).json({ success: false, message: 'Dataset not found' });
 
+    if (!fs.existsSync(dataset.filePath)) {
+      return res.status(404).json({ success: false, message: 'File no longer exists on the server' });
+    }
+
     dataset.downloads += 1;
     await dataset.save();
 
@@ -113,10 +117,16 @@ const downloadDataset = async (req, res, next) => {
       res.setHeader('Content-Type', dataset.mimeType || 'application/octet-stream');
 
       const readStream = fs.createReadStream(dataset.filePath);
+      readStream.on('error', (err) => next(err));
+      
       const gunzip = zlib.createGunzip();
+      gunzip.on('error', (err) => next(err));
+
       readStream.pipe(gunzip).pipe(res);
     } else {
-      res.download(dataset.filePath, dataset.originalName);
+      res.download(dataset.filePath, dataset.originalName, (err) => {
+        if (err) next(err);
+      });
     }
   } catch (err) { next(err); }
 };
