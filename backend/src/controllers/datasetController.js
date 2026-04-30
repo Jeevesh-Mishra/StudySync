@@ -169,7 +169,11 @@ const deleteDataset = async (req, res, next) => {
     const dataset = await Dataset.findById(req.params.id);
     if (!dataset) return res.status(404).json({ success: false, message: 'Dataset not found' });
 
-    // Any authenticated user can delete a dataset
+    // Only the uploader can delete
+    if (dataset.uploader.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Not authorized to delete this dataset' });
+    }
+
     // Delete the file from disk
     if (dataset.filePath && fs.existsSync(dataset.filePath)) {
       fs.unlinkSync(dataset.filePath);

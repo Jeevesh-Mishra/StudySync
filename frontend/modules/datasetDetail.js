@@ -25,9 +25,11 @@ const DatasetDetail = (() => {
       html += `<div class="dataset-meta"><span>👤 ${d.uploader?.username||'Unknown'}</span><span>📅 ${Utils.formatDate(d.createdAt)}</span><span>📦 ${Utils.formatFileSize(d.fileSize)}</span><span>👁 ${d.views}</span><span>⬇ ${d.downloads}</span></div>`;
       html += `<div style="margin-top:12px">${d.tags.map(t=>`<span class="tag" style="display:inline-block;padding:4px 12px;background:rgba(6,182,212,0.12);color:var(--accent-secondary);font-size:0.8rem;border-radius:20px;margin:2px">${t}</span>`).join('')}</div>`;
       html += `<p style="margin-top:16px;color:var(--text-secondary)">${Utils.escapeHtml(d.description||'')}</p></div>`;
+      const currentUser = Api.getUser();
+      const isOwner = currentUser && (currentUser._id === d.uploader?._id || currentUser.id === d.uploader?._id);
       html += `<div style="margin-bottom:24px;display:flex;gap:12px;align-items:center">
         <button class="btn btn-primary" id="download-btn">⬇ Download</button>
-        <button class="btn btn-danger" id="delete-dataset-btn">🗑 Delete Dataset</button>
+        ${isOwner ? `<button class="btn btn-danger" id="delete-dataset-btn">🗑 Delete Dataset</button>` : ''}
       </div>`;
       html += preview ? renderPreview(preview) : '';
       html += renderComments(d.comments || []);
